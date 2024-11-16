@@ -1,6 +1,7 @@
 import pandas as pd
 import re
 from add_zhvi import add_zhvi_values
+from outliers import remove_outliers
 
 
 def read_data():
@@ -207,6 +208,8 @@ def main():
     train, test = read_data()
     data, index = merge_data(train, test)
     transformation_features(data)
+    data.to_csv('./data_transformed.csv', index=False)
+    data = remove_outliers(data)
     write_data(data, index)
 
 
