@@ -46,6 +46,14 @@ def write_data(data,index):
     train.to_csv('data/train.csv',index=False)
     test.to_csv('data/test.csv',index=False)
 
+def seasonality_transformations(data):
+    """
+    Add seasonality features to the data
+    """
+    data['month'] = data['Listing.Dates.CloseDate'].dt.month
+    data.drop(['Tax.Zoning','UnitTypes,UnitTypeType'],axis=1)
+
+
 
 def main():
     train,test = read_data()
@@ -54,6 +62,7 @@ def main():
     structure_transformations(data)
     location_transformations()
     image_transformations()
+    seasonality_transformations(data)
 
     write_data(data,index)
 
