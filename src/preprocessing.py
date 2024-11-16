@@ -51,7 +51,7 @@ def seasonality_transformations(data):
     Add seasonality features to the data
     """
     data['month'] = data['Listing.Dates.CloseDate'].dt.month
-    data.drop(['Tax.Zoning','UnitTypes,UnitTypeType'],axis=1)
+    data.drop(['Tax.Zoning','UnitTypes.UnitTypeType'],axis=1)
 
 
 
