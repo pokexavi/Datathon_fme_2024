@@ -29,7 +29,6 @@ def treat_cooling_heating(data):
 
     data['cooling_heating'] = 
 
-
 def structure_transformations(data):
     """
     Preprocess the features with structure code
@@ -52,7 +51,6 @@ def seasonality_transformations(data):
     """
     data['month'] = data['Listing.Dates.CloseDate'].dt.month
     data.drop(['Tax.Zoning','UnitTypes.UnitTypeType'],axis=1)
-
 
 def characteristics_transformations(data):
     """
@@ -92,8 +90,6 @@ def characteristics_transformations(data):
 
     data = data.drop(columns=['Characteristics.LotFeatures', 'Characteristics.LotSizeSquareFeet'])
 
-    return data
-
 def structure_transformations(data):
     """
     Preprocess the features with structure code
@@ -101,8 +97,6 @@ def structure_transformations(data):
     treat_cooling_heating(data)
     #treat_new_construction_ny(data)
     
-    return data
-
 def location_transformations(data):
     """
     Preprocess the features with location code
@@ -111,7 +105,6 @@ def location_transformations(data):
 
     data = data.drop(columns=['Location.GIS.Latitude', 'Location.GIS.Longitude', 'Tax.Zoning', 'UnitTypes.UnitTypeType'])
 
-    return data
 
 def image_transformations(data):
     # Condition Mean
@@ -155,9 +148,6 @@ def image_transformations(data):
         data[column_name] = data[column_name].fillna(0.0)
 
     data = data.drop(columns=['ImageData.room_type_reso.results', 'ImageData.features_reso.results'])
-
-    return data
-
 
 
 def main():
