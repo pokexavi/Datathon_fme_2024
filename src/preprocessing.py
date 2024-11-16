@@ -48,7 +48,7 @@ def treat_basement(data):
     If value equals true then 1 else 0
     """
     data['Structure.Basement'] = data['Structure.Basement'].apply(
-        lambda x: 0 if pd.notnull(x) or 'none' in str(x) else (1 if pd.notnull(x) else x))
+        lambda x: 0 if pd.isnull(x) or 'none' in str(x) else (1 if pd.notnull(x) else x))
 
 
 def treat_fireplace(data):
