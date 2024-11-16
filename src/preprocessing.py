@@ -203,11 +203,9 @@ def write_data(data, index):
     test.to_csv('../data/test_preprocessed.csv', index=False)
 
 
-def main():
+def main_preprocessing():
     train, test = read_data()
     data, index = merge_data(train, test)
     transformation_features(data)
     write_data(data, index)
 
-
-main()
