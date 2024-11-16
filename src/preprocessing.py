@@ -1,4 +1,5 @@
 import pandas as pd
+import re
 from add_zhvi import add_zhvi_values
 
 
@@ -52,9 +53,9 @@ def treat_fireplace(data):
 
 def treat_garage(data):
     """
-    If the value greater than 0 then 1 else 0. If nan then 0
+    If the value is nan then 0, if is greater than 0 minimum 1 if not round the value
     """
-    data['Structure.GarageSpaces'] = data['Structure.GarageSpaces'].apply(lambda x: 0 if pd.isnull(x) else (1 if x > 0 else 0))
+    data['Structure.GarageSpaces'] = data['Structure.GarageSpaces'].apply(lambda x: 0 if pd.isnull(x) else (1 if x > 0 and x < 1 else round(x)))
 
 def structure_transformations(data):
     """
@@ -148,6 +149,7 @@ def seasonality_transformations(data):
     """
     Add seasonality features to the data
     """
+    data['Listing.Dates.CloseDate'] = pd.to_datetime(data['Listing.Dates.CloseDate'], errors='coerce')  
     data['month'] = data['Listing.Dates.CloseDate'].dt.month
 
 
@@ -161,11 +163,11 @@ def write_data(data,index):
     test.to_csv('../data/test_preprocessed.csv',index=False)
 
 def drop_features(data):
-    data.drop(['Structure.Cooling','Structure.Heating','Structure.BelowGradeFinishedArea','Structure.BelowGradeUnfinishedArea'
+    data.drop(['Structure.Cooling','Structure.Heating','Structure.BelowGradeFinishedArea','Structure.BelowGradeUnfinishedArea',
                'Structure.BathroomsHalf','Structure.BedroomsTotal','Structure.BathroomsFull','Structure.YearBuilt','Structure.ParkingFeatures','Tax.Zoning','UnitTypes.UnitTypeType',
                'Characteristics.LotFeatures', 'Characteristics.LotSizeSquareFeet','ImageData.room_type_reso.results', 'ImageData.features_reso.results'],axis=1,inplace=True)
 
-
+#TRANSFORM FEATURES
 def transformation_features(data):
     add_zhvi_values(data)
     structure_transformations(data)
