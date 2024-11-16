@@ -6,8 +6,8 @@ def read_data():
     """
     Read the data from the csv files
     """
-    train = pd.read_csv('data/train.csv')
-    test = pd.read_csv('data/test.csv')
+    train = pd.read_csv('../data/train.csv')
+    test = pd.read_csv('../data/test.csv')
     return train,test
 
 def merge_data(train,test):
@@ -157,8 +157,8 @@ def write_data(data,index):
     """
     train = data.iloc[:index]
     test = data.iloc[index:]
-    train.to_csv('..data/train_preprocessed.csv',index=False)
-    test.to_csv('..data/test_preprocessed.csv',index=False)
+    train.to_csv('../data/train_preprocessed.csv',index=False)
+    test.to_csv('../data/test_preprocessed.csv',index=False)
 
 def drop_features(data):
     data.drop(['Structure.Cooling','Structure.Heating','Structure.BelowGradeFinishedArea','Structure.BelowGradeUnfinishedArea'
@@ -180,6 +180,8 @@ def main():
     data,index = merge_data(train,test)
     transformation_features(data)
     write_data(data,index)
+
+main()
 
 
 
