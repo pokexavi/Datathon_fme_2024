@@ -1,0 +1,103 @@
+def characteristics_transformations(data):
+    """
+    Preprocess the features with characteristics code
+    """
+    # Define a regular expression to match words between single quotes
+    pattern = r"'([^']+)'"
+
+    # Initialize a set to store unique words
+    unique_words = set()
+
+
+    for entry in data['Characteristics.LotFeatures']:
+        if isinstance(entry, str) and entry != 'nan':  # Skip 'nan' and non-string entries
+            # Find all words enclosed in single quotes using regex
+            matches = re.findall(pattern, entry)
+            unique_words.update(matches)
+
+    # Print the result
+    print(len(unique_words))
+
+    # Dictionary to store counts of each substring
+    substring_count = {substring: 0 for substring in unique_words}
+
+    # Iterate over the substring set
+    for substring in unique_words:
+        # Count how many rows have the substring in the specified column
+        substring_count[substring] = data['Characteristics.LotFeatures'].str.contains(substring).sum()
+
+    categories = [key for key, value in substring_count.items() if value > 1000]
+
+    # Iterate through each category and create a new column for each one
+    for category in categories:
+        column_name = f"{category}_Flag"
+        data[column_name] = data['Characteristics.LotFeatures'].str.contains(category).astype(float)
+        data[column_name] = data[column_name].fillna(0.0)
+
+    data = data.drop(columns=['Characteristics.LotFeatures', 'Characteristics.LotSizeSquareFeet'])
+
+    return data
+
+def structure_transformations(data):
+    """
+    Preprocess the features with structure code
+    """
+    treat_cooling_heating(data)
+    #treat_new_construction_ny(data)
+    
+    return data
+
+def location_transformations(data):
+    """
+    Preprocess the features with location code
+    """
+    data = data.drop(columns=["Location.Area.SubdivisionName", "Location.School.HighSchoolDistrict", "Location.Address.StreetNumber", "Location.Address.CountyOrParish", "Location.Address.CensusTract", "Location.Address.City", "Location.Address.CensusBlock", "Location.Address.PostalCodePlus4", "Location.Address.StateOrProvince", "Location.Address.StreetDirectionPrefix", "Location.Address.StreetDirectionSuffix", "Location.Address.StreetName", "Location.Address.StreetSuffix", "Location.Address.UnitNumber", "Location.Address.UnparsedAddress"])
+
+    data = data.drop(columns=['Location.GIS.Latitude', 'Location.GIS.Longitude', 'Tax.Zoning', 'UnitTypes.UnitTypeType'])
+
+    return data
+
+def image_transformations(data):
+    # Condition Mean
+    data["ImageData.c1c6.Mean"] = data[['ImageData.c1c6.summary.bathroom', 'ImageData.c1c6.summary.exterior', 'ImageData.c1c6.summary.interior', 'ImageData.c1c6.summary.kitchen', 'ImageData.c1c6.summary.property']].mean(axis=1)
+    # Quality Mean
+    data["ImageData.q1q6.Mean"] = data[['ImageData.q1q6.summary.bathroom', 'ImageData.q1q6.summary.exterior', 'ImageData.q1q6.summary.interior', 'ImageData.q1q6.summary.kitchen', 'ImageData.q1q6.summary.property']].mean(axis=1)
+
+    data = data.drop(columns=['ImageData.c1c6.summary.bathroom', 'ImageData.c1c6.summary.exterior', 'ImageData.c1c6.summary.interior', 'ImageData.c1c6.summary.kitchen', 'ImageData.c1c6.summary.property', 'ImageData.q1q6.summary.bathroom', 'ImageData.q1q6.summary.exterior', 'ImageData.q1q6.summary.interior', 'ImageData.q1q6.summary.kitchen', 'ImageData.q1q6.summary.property'])
+    data["ImageData.style.stories.summary.label"] = data["ImageData.style.stories.summary.label"].str.split('_').str[0].astype(float)
+
+    # Define a regular expression to match words between single quotes
+    pattern = r"'([^']+)'"
+
+    # Initialize a set to store unique words
+    unique_words = set()
+
+    for entry in data['ImageData.features_reso.results']:
+        if isinstance(entry, str) and entry != 'nan':  # Skip 'nan' and non-string entries
+            # Find all words enclosed in single quotes using regex
+            matches = re.findall(pattern, entry)
+            unique_words.update(matches)
+
+    # Dictionary to store counts of each substring
+    substring_count = {substring: 0 for substring in unique_words}
+
+    # Iterate over the substring set
+    for substring in unique_words:
+        # Count how many rows have the substring in the specified column
+        substring_count[substring] = data['ImageData.features_reso.results'].str.contains(substring).sum()
+
+    categories = [key for key, value in substring_count.items() if value > 1000]
+
+    important_features = ["View", "CommunityFeatures", "AssociationAmenities", "WaterfrontFeatures", "PoolFeatures", "SpaFeatures"]
+
+    important_categories = [item for item in categories if any(sub in item for sub in important_features)]
+
+    # Iterate through each category and create a new column for each one
+    for category in important_categories:
+        column_name = f"{category}_Flag"
+        data[column_name] = data['ImageData.features_reso.results'].str.contains(category).astype(float)
+        data[column_name] = data[column_name].fillna(0.0)
+
+    data = data.drop(columns=['ImageData.room_type_reso.results', 'ImageData.features_reso.results'])
+
+    return data
