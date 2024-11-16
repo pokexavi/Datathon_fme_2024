@@ -89,6 +89,3 @@ def main():
     drop_features(data)
 
     write_data(data,index)
-
-
-
