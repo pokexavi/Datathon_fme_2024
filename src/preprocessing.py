@@ -1,4 +1,5 @@
 import pandas as pd
+from add_zhvi import add_zhvi_values
 
 
 def read_data():
@@ -49,6 +50,7 @@ def write_data(data,index):
 def main():
     train,test = read_data()
     data,index = merge_data(train,test)
+    add_zhvi_values(data)
     structure_transformations(data)
     location_transformations()
     image_transformations()
