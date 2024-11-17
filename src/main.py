@@ -3,6 +3,12 @@ from transformations import main_transformations
 from train import main_train
 
 if "__main__" == __name__:
-    main_data_preprocessing()
-    main_transformations()
-    main_train()
+    PREPROCESSING = False
+    TRANSFORMATIONS = False
+    TRAIN = True
+    if PREPROCESSING:
+        main_data_preprocessing()
+    if TRANSFORMATIONS:
+        main_transformations()
+    if TRAIN:
+        main_train()

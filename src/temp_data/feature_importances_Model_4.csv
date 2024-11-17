@@ -1,0 +1,58 @@
+feature,importance
+zhvi_value,0.281899014526948
+Structure.LivingArea,0.21116809753382168
+ImageData.q1q6.Mean,0.18429603165365022
+Structure.FireplacesTotal,0.08017731681839878
+ImageData.c1c6.Mean,0.06404151369426635
+Structure.GarageSpaces,0.037534811506565534
+ImageData.style.stories.summary.label,0.03507330121866759
+Structure.Basement,0.023487703694335848
+Month,0.01606219788355442
+cooling_heating,0.010646819056135034
+landscaped_Flag,0.006535144225791589
+View.City_Flag,0.005953963267890538
+AssociationAmenities.Laundry_Flag,0.004603930368442188
+common grounds_Flag,0.003045510941826632
+View.Skyline_Flag,0.002945005030837122
+CommunityFeatures.Suburban_Flag,0.0027682099093296877
+fenced yard_Flag,0.002650086895285208
+View.Water_Flag,0.0018669633036345094
+View.Forest_Flag,0.0018339759421146498
+View.TreesWoods_Flag,0.0018131599305804302
+mature trees_Flag,0.0016722974726696104
+CommunityFeatures.FitnessCenter_Flag,0.0014086603961228018
+AssociationAmenities.FitnessCenter_Flag,0.0013414117032073646
+cul-de-sac_Flag,0.00119894490298113
+corner lot_Flag,0.0009910070502854368
+water view_Flag,0.0009276956455663911
+wooded_Flag,0.0008324930176967112
+WaterfrontFeatures.Pond_Flag,0.0007548272635664768
+AssociationAmenities.Barbecue_Flag,0.0007285097395593245
+PoolFeatures.Association_Flag,0.0007177430483010783
+PoolFeatures.InGround_Flag,0.0007010393594742824
+PoolFeatures.OutdoorPool_Flag,0.0006984831545245748
+AssociationAmenities.Elevators_Flag,0.0006751489429776187
+AssociationAmenities.GameRoom_Flag,0.0006593000384897167
+AssociationAmenities.IndoorPool_Flag,0.0005842915371581317
+PoolFeatures.Indoor_Flag,0.0005758403949975842
+AssociationAmenities.Park_Flag,0.0005723456457056342
+outdoor lighting_Flag,0.0005658655012091013
+PoolFeatures.Fenced_Flag,0.0005605560652167105
+lake front_Flag,0.0004779159720028685
+sidewalks_Flag,0.0004704153525261708
+streetlights_Flag,0.0004700047197239696
+CommunityFeatures.Park_Flag,0.00046490106033872803
+AssociationAmenities.Pool_Flag,0.00042456286862684425
+PoolFeatures.Community_Flag,0.0004002693350700775
+CommunityFeatures.Pool_Flag,0.0003839836228580108
+SpaFeatures.Private_Flag,0.00037320618996400395
+park adjacent_Flag,0.00033894462381104897
+CommunityFeatures.Playground_Flag,0.0002824375724254453
+PoolFeatures.AboveGround_Flag,0.00027847399709520924
+AssociationAmenities.Playground_Flag,0.0002541933083414669
+irregular lot_Flag,0.00024110840590023012
+PoolFeatures.Private_Flag,0.0002006948684058389
+AssociationAmenities.TennisCourts_Flag,0.0001966846598376857
+level_Flag,0.00010469954311287365
+PoolFeatures.PoolCover_Flag,6.828561817394595e-05
+Structure.NewConstructionYN,0.0
