@@ -14,17 +14,39 @@ def read_data_processed():
     train = pd.read_csv('../data/train_preprocessed.csv')
     test = pd.read_csv('../data/test_preprocessed.csv')
     # Eliminar las columnas innecesarias
-    train = train.drop(columns=['Listing.ListingId', 'Property.PropertyType','Location.Address.PostalCode'])
-    test = test.drop(columns=['Property.PropertyType','Location.Address.PostalCode','Listing.Price.ClosePrice'])
+    train = train.drop(columns=['Listing.ListingId','Location.Address.PostalCode'])
+    test = test.drop(columns=['Location.Address.PostalCode','Listing.Price.ClosePrice'])
     return train, test
 
-def create_param_grid():
+def create_param_grid_random_forest():
     return {
         'n_estimators': [int(x) for x in np.linspace(20, 200, 10)],  
         'max_depth': [int(x) for x in np.linspace(3, 40, 10)],         
         'min_samples_split': [5, 10],                                              
         'min_samples_leaf': [2, 4],                                               
         'max_features': ['sqrt', 'log2']                                                                                      
+    }
+
+def create_param_grid_xgboost():
+    return {
+        'n_estimators': [int(x) for x in np.linspace(50, 300, 6)],
+        'max_depth': [3, 5, 7, 10],
+        'learning_rate': [0.01, 0.05, 0.1, 0.2],
+        'subsample': [0.6, 0.8, 1.0],
+        'colsample_bytree': [0.6, 0.8, 1.0],
+        'gamma': [0, 0.1, 0.3],
+        'reg_alpha': [0, 0.1, 0.5],
+        'reg_lambda': [1, 1.5, 2]
+    }
+
+def create_param_grid_catboost():
+    return {
+        'iterations': [100, 200, 300],
+        'depth': [4, 6, 8, 10],
+        'learning_rate': [0.01, 0.05, 0.1],
+        'l2_leaf_reg': [1, 3, 5],
+        'bagging_temperature': [0.1, 0.5, 1],
+        'border_count': [32, 64, 128]
     }
 
 def create_experiment(name='housing_price_prediction'):
@@ -63,8 +85,8 @@ def train_random_forest(x_train, y_train):
 
     random_search = RandomizedSearchCV(
         estimator=base_model,
-        param_distributions=create_param_grid(), 
-        n_iter=10,
+        param_distributions=create_param_grid_random_forest(), 
+        n_iter=5,
         cv=5,                                  
         n_jobs=mp.cpu_count(),                    
         verbose=2,                                
@@ -82,7 +104,7 @@ def train_random_forest(x_train, y_train):
     run_id = f"Model_{len(mlflow.search_runs())}"
     with mlflow.start_run(run_name=run_id):
         mlflow.log_params(random_search.best_params_)
-        mlflow.log_metric("mae_error", -random_search.best_score_)
+        mlflow.log_metric("mae_score", -random_search.best_score_)
         mlflow.log_metric("r2_score", r2)
         mlflow.sklearn.log_model(best_model, "model")
         mlflow.set_tag("model", "RandomForest")
@@ -101,8 +123,8 @@ def train_xgboost(x_train, y_train):
     )
     random_search = RandomizedSearchCV(
         estimator=base_model,
-        param_distributions=create_param_grid(), 
-        n_iter=5,
+        param_distributions=create_param_grid_xgboost(), 
+        n_iter=10,
         cv=5,                                  
         n_jobs=mp.cpu_count(),                    
         verbose=2,                                
@@ -136,8 +158,8 @@ def train_catboost(x_train, y_train):
     )
     random_search = RandomizedSearchCV(
         estimator=base_model,
-        param_distributions=create_param_grid(), 
-        n_iter=5,
+        param_distributions=create_param_grid_catboost(), 
+        n_iter=10,
         cv=5,                                  
         n_jobs=mp.cpu_count(),                    
         verbose=2,                                
@@ -204,7 +226,11 @@ def main_train():
     
     if not os.path.exists('predictions'):
         os.makedirs('predictions')
-    pd.DataFrame(predictions, columns=["PredictedPrice"]).to_csv('predictions/predictions.csv', index=False)
+    predictions_df = pd.DataFrame({
+    'Listing.ListingId': test['Listing.ListingId'],  # Añadir la columna 'Listing.ListingId' de 'test'
+    'PredictedPrice': predictions                     # Añadir las predicciones
+})
+    predictions_df.to_csv('predictions/predictions.csv', index=False)
     print("Predictions saved successfully.")
 
 main_train()
