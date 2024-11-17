@@ -15,7 +15,8 @@ def read_data_processed():
     Read the data from the csv files
     """
     train = pd.read_csv('../data/train_preprocessed.csv')
-    return train
+    test = pd.read_csv('../data/test_preprocessed.csv')
+    return train,test
 
 def create_param_grid():
     """
@@ -43,12 +44,12 @@ def create_experiment(name='housing_price_prediction'):
         mlflow.set_experiment(name)
     
 
-def prepare_data_to_train(train):
+def prepare_data_to_train(data):
     """
     Prepare the data to train the model
     """
-    X = train.drop(columns=['Listing.Price.ClosePrice'])
-    y = train['Listing.Price.ClosePrice']
+    X = data.drop(columns=['Listing.Price.ClosePrice'])
+    y = data['Listing.Price.ClosePrice']
 
     return X, y
 
@@ -89,18 +90,33 @@ def train_random_forest(x_train,y_train):
     best_model = random_search.best_estimator_
 
     id = "Model_" + str(datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
-    with mlflow.start_run():
+    with mlflow.start_run(run_name=id) as run:
         mlflow.log_params(random_search.best_params_)
         mlflow.log_metrics(random_search.best_score_)
-        mlflow.sklearn.log_model(best_model, id) 
+        mlflow.sklearn.log_model(best_model, id)
+        #añade tag que es random forest
+        mlflow.set_tag("model", "RandomForest") 
         feature_names = x_train.columns 
         feature_imp = save_feature_importance(best_model, feature_names, id)
+
+def prediction(x_test,y_test):
+    """
+    Predict the values using the best model
+    """
+    best_model = mlflow.search_runs(filter_string="tags.model = 'RandomForest'").sort_values(by=['metrics.mean_squared_error'], ascending=True).iloc[0]
+    predictions = best_model.predict(x_test)
+    return predictions
 
 
 def main_train():
     TRACKING_MLFLOW = "http://localhost:5000"
     mlflow.set_tracking_uri(TRACKING_MLFLOW)
     create_experiment()
-    train = read_data_processed()
+    train,x_test= read_data_processed()
     x_train,y_train = prepare_data_to_train(train)
     train_random_forest(x_train,y_train)
+    predictions = prediction(x_test)
+    #guarda en la carpeta predictions y mira si existe
+    if not os.path.exists('predictions'):
+        os.makedirs('predictions')
+    pd.DataFrame(predictions).to_csv('predictions/predictions.csv', index=False)
