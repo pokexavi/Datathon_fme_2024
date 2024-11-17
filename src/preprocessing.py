@@ -302,4 +302,3 @@ def main_preprocessing():
     write_data(data, index)
 
 main_preprocessing()
-
