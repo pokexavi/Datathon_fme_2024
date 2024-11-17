@@ -1,58 +1,76 @@
 feature,importance
-zhvi_value,0.27302474295968154
-Structure.LivingArea,0.2035729340450968
-ImageData.q1q6.Mean,0.18967724569460986
-Structure.FireplacesTotal,0.0689082035977652
-ImageData.c1c6.Mean,0.06668625323861646
-Structure.GarageSpaces,0.044938870453413236
-ImageData.style.stories.summary.label,0.03316796126628803
-Structure.Basement,0.020561319961296152
-Month,0.019587986779491195
-cooling_heating,0.010614011512467297
-landscaped_Flag,0.006994768607610661
-View.City_Flag,0.00599037206069323
-AssociationAmenities.Laundry_Flag,0.004854378052038028
-CommunityFeatures.Suburban_Flag,0.0035887870306047843
-View.Skyline_Flag,0.003532279681978016
-common grounds_Flag,0.0034098469750148044
-fenced yard_Flag,0.003371773884612213
-View.TreesWoods_Flag,0.0024096684068540325
-View.Forest_Flag,0.0023333376168713665
-View.Water_Flag,0.002120606471567065
-mature trees_Flag,0.002001186048096083
-cul-de-sac_Flag,0.0017984929272160369
-corner lot_Flag,0.0017593884589104374
-CommunityFeatures.FitnessCenter_Flag,0.0015010752559053635
-AssociationAmenities.FitnessCenter_Flag,0.0013707947189089374
-AssociationAmenities.Barbecue_Flag,0.001240197161494897
-water view_Flag,0.0012376782231787499
-wooded_Flag,0.0012150970753598935
-WaterfrontFeatures.Pond_Flag,0.0011927332823400663
-AssociationAmenities.GameRoom_Flag,0.000993397552642855
-PoolFeatures.OutdoorPool_Flag,0.0009739393217628923
-sidewalks_Flag,0.0009297386826104616
-PoolFeatures.InGround_Flag,0.0008999698879183198
-AssociationAmenities.Park_Flag,0.0008390349733784685
-CommunityFeatures.Park_Flag,0.0008174698288403537
-streetlights_Flag,0.0008086816211022471
-PoolFeatures.Fenced_Flag,0.0008004284247281323
-lake front_Flag,0.0007757994275237232
-outdoor lighting_Flag,0.0007731134846620586
-AssociationAmenities.Elevators_Flag,0.0007521606386751924
-park adjacent_Flag,0.000692078769150848
-PoolFeatures.Indoor_Flag,0.0006670528692302162
-AssociationAmenities.IndoorPool_Flag,0.000662929480571609
-SpaFeatures.Private_Flag,0.0006518076403657668
-irregular lot_Flag,0.0006386738561650193
-AssociationAmenities.Pool_Flag,0.0006167022674482287
-PoolFeatures.Community_Flag,0.000603838951857658
-PoolFeatures.Association_Flag,0.0005795979890436641
-CommunityFeatures.Pool_Flag,0.0005686023761268262
-CommunityFeatures.Playground_Flag,0.0004549842457492641
-AssociationAmenities.Playground_Flag,0.0004371529196734905
-PoolFeatures.Private_Flag,0.00032800614715595684
-PoolFeatures.AboveGround_Flag,0.00031424597635529625
-AssociationAmenities.TennisCourts_Flag,0.0003001884654141568
-level_Flag,0.00027223794333452946
-PoolFeatures.PoolCover_Flag,0.00018617481053224735
+zhvi_value,24.631411245803058
+Structure.LivingArea,22.926816726458227
+ImageData.q1q6.Mean,15.322833555666092
+Structure.GarageSpaces,6.173202262831578
+Structure.Basement,3.993329141296991
+ImageData.c1c6.Mean,3.92758901937251
+Structure.FireplacesTotal,3.593294480030392
+ImageData.style.stories.summary.label,2.344057209408464
+Category_commercial sale,1.9859191073493192
+Month_5,1.914955384666443
+cooling_heating,1.4618623062763654
+Month_6,1.3484117637955257
+View.City_Flag,1.1413485270072856
+AssociationAmenities.Laundry_Flag,1.011845244581927
+Category_residential,1.0042933904524791
+CommunityFeatures.Suburban_Flag,0.5113247958604699
+Month_4,0.4760269279891651
+common grounds_Flag,0.39056774588697774
+fenced yard_Flag,0.3818520604761062
+Category_manufactured in park,0.3597949132955218
+View.Skyline_Flag,0.3000212960092385
+View.Water_Flag,0.2725860873566136
+landscaped_Flag,0.24598591573177625
+View.TreesWoods_Flag,0.24383319528554157
+Month_3,0.21773091923269736
+View.Forest_Flag,0.20544939086006925
+mature trees_Flag,0.1991749037788575
+lake front_Flag,0.18392607648382728
+Month_8,0.16903418326636133
+Category_business opportunity,0.16534460780340887
+Category_commercial lease,0.1580876710717615
+Month_12,0.15574102892676958
+Category_residential income,0.14939191867706764
+AssociationAmenities.GameRoom_Flag,0.14852092453410543
+corner lot_Flag,0.1478202972956086
+Month_1,0.14399972324155824
+WaterfrontFeatures.Pond_Flag,0.13074950697158594
+cul-de-sac_Flag,0.12966772306508945
+Category_farm,0.12692476060659305
+AssociationAmenities.Barbecue_Flag,0.11416985818160598
+CommunityFeatures.FitnessCenter_Flag,0.10546821780258979
+Month_7,0.10226073114161807
+wooded_Flag,0.10012657836422202
+Month_11,0.09976214600480984
+water view_Flag,0.09560670953247874
+Month_2,0.094474997236128
+outdoor lighting_Flag,0.07732253448731626
+PoolFeatures.Association_Flag,0.07691449624647494
+AssociationAmenities.IndoorPool_Flag,0.07205767875921006
+Month_9,0.06840008749799467
+PoolFeatures.OutdoorPool_Flag,0.06003341395908128
+Month_10,0.048728105364742154
+park adjacent_Flag,0.04786206159950528
+AssociationAmenities.FitnessCenter_Flag,0.04199734707954341
+irregular lot_Flag,0.03847187470186535
+streetlights_Flag,0.03761353605577192
+AssociationAmenities.Elevators_Flag,0.030859901928468193
+AssociationAmenities.TennisCourts_Flag,0.029286454292494296
+PoolFeatures.Community_Flag,0.028528618349431472
+PoolFeatures.Indoor_Flag,0.0282232982429807
+PoolFeatures.Fenced_Flag,0.027193382370870035
+level_Flag,0.025763330332050062
+CommunityFeatures.Park_Flag,0.02477750466403297
+AssociationAmenities.Park_Flag,0.023085275226877183
+CommunityFeatures.Pool_Flag,0.022954675349585296
+AssociationAmenities.Playground_Flag,0.021967135496454997
+AssociationAmenities.Pool_Flag,0.019823045586680632
+PoolFeatures.InGround_Flag,0.015438977309042801
+CommunityFeatures.Playground_Flag,0.011638207144181054
+sidewalks_Flag,0.011166175357667008
+PoolFeatures.AboveGround_Flag,0.0032977056307462466
+PoolFeatures.PoolCover_Flag,0.0
 Structure.NewConstructionYN,0.0
+PoolFeatures.Private_Flag,0.0
+SpaFeatures.Private_Flag,0.0

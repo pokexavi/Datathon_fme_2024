@@ -86,7 +86,7 @@ def train_random_forest(x_train, y_train):
     random_search = RandomizedSearchCV(
         estimator=base_model,
         param_distributions=create_param_grid_random_forest(), 
-        n_iter=5,
+        n_iter=30,
         cv=5,                                  
         n_jobs=mp.cpu_count(),                    
         verbose=2,                                
@@ -104,13 +104,14 @@ def train_random_forest(x_train, y_train):
     run_id = f"Model_{len(mlflow.search_runs())}"
     with mlflow.start_run(run_name=run_id):
         mlflow.log_params(random_search.best_params_)
-        mlflow.log_metric("mae_score", -random_search.best_score_)
+        mlflow.log_metric("mae_error", -random_search.best_score_)
         mlflow.log_metric("r2_score", r2)
         mlflow.sklearn.log_model(best_model, "model")
         mlflow.set_tag("model", "RandomForest")
         mlflow.set_tag("name", run_id)
         feature_names = x_train.columns
         save_feature_importance(best_model, feature_names, run_id)
+    return best_model,run_id
 
 def train_xgboost(x_train, y_train):
     """
@@ -124,7 +125,7 @@ def train_xgboost(x_train, y_train):
     random_search = RandomizedSearchCV(
         estimator=base_model,
         param_distributions=create_param_grid_xgboost(), 
-        n_iter=10,
+        n_iter=50,
         cv=5,                                  
         n_jobs=mp.cpu_count(),                    
         verbose=2,                                
@@ -140,13 +141,14 @@ def train_xgboost(x_train, y_train):
 
     with mlflow.start_run(run_name=run_id):
         mlflow.log_params(random_search.best_params_)
-        mlflow.log_metric("mae_score", -random_search.best_score_)
+        mlflow.log_metric("mae_error", -random_search.best_score_)
         mlflow.log_metric("r2_score", r2)
         mlflow.sklearn.log_model(best_model, "model")
         mlflow.set_tag("model", "xgboost")
         mlflow.set_tag("name", run_id)
         feature_names = x_train.columns
         save_feature_importance(best_model, feature_names, run_id)
+    return best_model,run_id
 
 def train_catboost(x_train, y_train):
     """
@@ -159,7 +161,7 @@ def train_catboost(x_train, y_train):
     random_search = RandomizedSearchCV(
         estimator=base_model,
         param_distributions=create_param_grid_catboost(), 
-        n_iter=10,
+        n_iter=50,
         cv=5,                                  
         n_jobs=mp.cpu_count(),                    
         verbose=2,                                
@@ -175,33 +177,121 @@ def train_catboost(x_train, y_train):
 
     with mlflow.start_run(run_name=run_id):
         mlflow.log_params(random_search.best_params_)
-        mlflow.log_metric("mae_score", -random_search.best_score_)
+        mlflow.log_metric("mae_error", -random_search.best_score_)
         mlflow.log_metric("r2_score", r2)
         mlflow.sklearn.log_model(best_model, "model")
         mlflow.set_tag("model", "CatBoost")
         mlflow.set_tag("name", run_id)
         feature_names = x_train.columns
         save_feature_importance(best_model, feature_names, run_id)
+    return best_model,run_id
 
-def train_ensemble(x_train, y_train):
-    """
-    Train an ensemble model
-    """
 
+def train_ensemble(x_train, y_train, model_1, model_2, model_3,id_1,id_2,id_3):
+    """
+    Train an ensemble model by averaging predictions from RandomForest, XGBoost, and CatBoost
+    """
+    print("Training ensemble model...")
+
+    # Realizar predicciones con cada modelo en el conjunto de entrenamiento
+    predictions_1 = model_1.predict(x_train)
+    predictions_2 = model_2.predict(x_train)
+    predictions_3 = model_3.predict(x_train)
+
+    # Promediar las predicciones de los tres modelos
+    ensemble_predictions = (predictions_1 + predictions_2 + predictions_3) / 3
+
+    # Calcular las métricas de rendimiento
+    r2 = r2_score(y_train, ensemble_predictions)
+    mae = np.mean(np.abs(y_train - ensemble_predictions))
+
+    # Registrar el ensemble en MLflow
+    run_id = f"EnsembleModel_{len(mlflow.search_runs())}"
+    with mlflow.start_run(run_name=run_id):
+        mlflow.log_metric("mae_error", mae)
+        mlflow.log_metric("r2_score", r2)
+        mlflow.set_tag("model", "EnsembleModel")
+        mlflow.set_tag("name", run_id)
+        mlflow.set_tag("model_1", id_1)
+        mlflow.set_tag("model_2", id_2)
+        mlflow.set_tag("model_3", id_3)
+    
+    print("Ensemble model training completed.")
+
+
+def train_best_ensemble(x_train, y_train):
+    # Obtener los mejores modelos de cada tipo en funcion del tag
+    best_rf = mlflow.search_runs(filter_string="tags.model='RandomForest'", order_by=["metrics.mae_error ASC"], max_results=1)
+    best_xgb = mlflow.search_runs(filter_string="tags.model='xgboost'", order_by=["metrics.mae_error ASC"], max_results=1)
+    best_cat = mlflow.search_runs(filter_string="tags.model='CatBoost'", order_by=["metrics.mae_error ASC"], max_results=1)
+
+    experiment_id = best_rf.iloc[0].experiment_id
+
+    best_rf_id = best_rf.iloc[0].run_id
+    model_uri_rf = f"mlflow-artifacts:/{experiment_id}/{best_rf_id}/artifacts/model"
+    best_rf = mlflow.sklearn.load_model(model_uri_rf)   
+
+    best_xgb_id = best_xgb.iloc[0].run_id
+    model_uri_xgb = f"mlflow-artifacts:/{experiment_id}/{best_xgb_id}/artifacts/model"
+    best_xgb = mlflow.sklearn.load_model(model_uri_xgb)
+
+    best_cat_id = best_cat.iloc[0].run_id
+    model_uri_cat = f"mlflow-artifacts:/{experiment_id}/{best_cat_id}/artifacts/model"
+    best_cat = mlflow.sklearn.load_model(model_uri_cat)
+
+    predictions_1 = best_rf.predict(x_train)
+    predictions_2 = best_xgb.predict(x_train)
+    predictions_3 = best_cat.predict(x_train)
+
+    # Promediar las predicciones de los tres modelos
+    ensemble_predictions = (predictions_1 + predictions_2 + predictions_3) / 3
+
+    # Calcular las métricas de rendimiento
+    r2 = r2_score(y_train, ensemble_predictions)
+    mae = np.mean(np.abs(y_train - ensemble_predictions))
+
+    # Registrar el ensemble en MLflow
+    run_id = f"EnsembleModel_{len(mlflow.search_runs())}"
+    with mlflow.start_run(run_name=run_id):
+        mlflow.log_metric("mae_error", mae)
+        mlflow.log_metric("r2_score", r2)
+        mlflow.set_tag("model", "EnsembleModel")
+        mlflow.set_tag("name", run_id)
+        mlflow.set_tag("model_1", best_rf_id)
+        mlflow.set_tag("model_2", best_xgb_id)
+        mlflow.set_tag("model_3", best_cat_id)
+    
+    print("Ensemble model training completed.")
 
 
 def prediction(x_test):
     print("Predicting the values...")
-    best_run = mlflow.search_runs(order_by=["metrics.mae_score ASC"], max_results=1)
+    best_run = mlflow.search_runs(order_by=["metrics.mae_error ASC"], max_results=1)
     best_run_id = best_run.iloc[0].run_id
     experiment_id = best_run.iloc[0].experiment_id
     print(f"Best run id: {best_run_id}, Experiment id: {experiment_id}")
     #id = mlflow.get_run(best_run_id).data.tags['name']
-
-    model_uri = f"mlflow-artifacts:/{experiment_id}/{best_run_id}/artifacts/model"
-    best_model = mlflow.sklearn.load_model(model_uri)
-    predictions = best_model.predict(x_test)
-    return predictions
+    #mira si el tag model es ensemble
+    if mlflow.get_run(best_run_id).data.tags['model'] == 'EnsembleModel':
+        best_rf_id = mlflow.get_run(best_run_id).data.tags['model_1']
+        best_xgb_id = mlflow.get_run(best_run_id).data.tags['model_2']
+        best_cat_id = mlflow.get_run(best_run_id).data.tags['model_3']
+        model_uri_rf = f"mlflow-artifacts:/{experiment_id}/{best_rf_id}/artifacts/model"
+        model_uri_xgb = f"mlflow-artifacts:/{experiment_id}/{best_xgb_id}/artifacts/model"
+        model_uri_cat = f"mlflow-artifacts:/{experiment_id}/{best_cat_id}/artifacts/model"
+        best_rf = mlflow.sklearn.load_model(model_uri_rf)
+        best_xgb = mlflow.sklearn.load_model(model_uri_xgb)
+        best_cat = mlflow.sklearn.load_model(model_uri_cat)
+        predictions_1 = best_rf.predict(x_test)
+        predictions_2 = best_xgb.predict(x_test)
+        predictions_3 = best_cat.predict(x_test)
+        ensemble_predictions = (predictions_1 + predictions_2 + predictions_3) / 3
+        return ensemble_predictions
+    else:
+        model_uri = f"mlflow-artifacts:/{experiment_id}/{best_run_id}/artifacts/model"
+        best_model = mlflow.sklearn.load_model(model_uri)
+        predictions = best_model.predict(x_test)
+        return predictions
 
 def main_train():
     TRACKING_MLFLOW = "http://localhost:5000"
@@ -214,11 +304,11 @@ def main_train():
     print("Preparing data to train...")
     x_train, y_train = prepare_data_to_train(train)
     
-    print("Training random forest...")
-    train_random_forest(x_train, y_train)
-    train_xgboost(x_train, y_train)
-    train_catboost(x_train, y_train)
-    #train_ensemble(x_train, y_train)
+    model_1,id_1 = train_random_forest(x_train, y_train)
+    model_2,id_2 = train_xgboost(x_train, y_train)
+    model_3,id_3 = train_catboost(x_train, y_train)
+    train_ensemble(x_train, y_train,model_1,model_2,model_3,id_1,id_2,id_3)
+    train_best_ensemble(x_train,y_train)
 
     
     x_test_to_pred = test.drop(columns=['Listing.ListingId'])
